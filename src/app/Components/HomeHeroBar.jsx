@@ -50,9 +50,9 @@ export default function HomeHero() {
       {/* HERO CONTENT */}
       <section className="min-h-[80vh] flex flex-col items-center justify-center text-center px-4">
   <motion.h1
-    initial={{ y: 40, opacity: 0 }}
-    animate={{ y: 0, opacity: 1 }}
-    transition={{ duration: 0.6 }}
+    initial={{ y: 20, scale:1.3 , opacity: 0 }}
+    whileInView={{ y: 0, opacity: 1 , scale:1 }}
+    transition={{ duration: 0.90 }}
     className="text-4xl sm:text-6xl md:text-7xl font-extrabold text-white"
   >
     Tutor Finder
@@ -69,14 +69,15 @@ export default function HomeHero() {
 <section className="pt-8 pb-16 md:pt-12 md:pb-24 px-6 md:px-16">
   <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-12">
     <div className="w-full md:w-1/2">
-      <img
+      <motion.img
+      initial={{x:-30 , opacity:0}} whileInView={{x:0 , opacity:1}} transition={{duration:0.4 , delay:0.5}}
         src="tutionfinder.png"
         alt="Tuition Finder"
         className="w-full max-h-[520px] rounded-2xl object-contain"
       />
     </div>
 
-    <div className="w-full md:w-1/2">
+    <motion.div initial={{x:30 , opacity:0}} whileInView={{x:0 , opacity:1}} transition={{duration:0.4 , delay:0.5}} className="w-full md:w-1/2">
       <h1 className="text-4xl font-bold text-white">
         TutorMatch – Find the Right Tutor
       </h1>
@@ -85,14 +86,17 @@ export default function HomeHero() {
         The right tuition focuses on concept clarity, personal attention, and consistent
         improvement. A good teacher builds confidence, not pressure.
       </p>
-    </div>
+    </motion.div>
   </div>
 </section>
 
      <section className="w-full px-4 md:px-20">
   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
     {data.map((card, i) => (
-      <div
+      <motion.div
+      initial={{y:50 , opacity:0}}
+      whileInView={{y:0 , opacity:1}}
+      transition={{duration:0.5 , delay:i * 0.2}}
         key={i}
         className="bg-white p-3 rounded-2xl shadow-sm hover:shadow-md transition"
       >
@@ -108,7 +112,7 @@ export default function HomeHero() {
           <h1 className="text-lg font-semibold">{card.title}</h1>
           <p className="text-gray-400">{card.description.slice(0,100)}...</p>
         </div>
-      </div>
+      </motion.div>
       
     ))}
     

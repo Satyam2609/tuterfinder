@@ -156,13 +156,20 @@ export default function SignUp() {
   animate={{ x: 0, opacity: 1 }}
   transition={{ duration: 0.6, ease: "easeInOut" }}
   className="w-full md:w-1/2 flex flex-col justify-center gap-8 p-6 md:p-10 bg-white"
+
 >
+  <div className=" text-xl underline absolute top-10 flex gap-1">
+    <h1>LogIn In Your Account</h1>
+  <label className="text-blue-500 cursor-pointer" ><a href="/Register/login">SignIn</a></label>
+  </div>
   <h1 className="text-3xl font-bold text-center">
     Enter your role
   </h1>
+  
 
   {/* Role buttons */}
   <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
+    
     <button onClick={() => {setformdata(prev => ({...prev , role:"student"})) , setroles(true)}} className="h-12 px-10 rounded-xl bg-amber-500 text-white font-medium hover:bg-amber-600 transition">
       Student
     </button>

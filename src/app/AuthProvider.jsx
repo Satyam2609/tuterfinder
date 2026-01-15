@@ -12,11 +12,12 @@ export default function AuthProvider({children}) {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const res = await axios.get("http://localhost:4000/api/username", {
+        const res = await axios.get("http://localhost:4000/api/authprovider", {
           withCredentials: true,
         })
         if (res.data?.user) {
-          setUser(res.data.user)
+          console.log("data auth" , res.data)
+          setUser(res.data)
           setUsername(res.data.user.username || "")
         } else {
           setUser(null)
