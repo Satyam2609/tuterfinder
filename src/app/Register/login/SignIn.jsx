@@ -13,6 +13,9 @@ export default function SignIn(){
         email:"",
         password:""
     })
+    const [usern , setusern] = useState("")
+    const [roles , setroles] = useState("")
+    
     const [message , setmessage] = useState("")
     const router = useRouter()
     const [loader , setloader] = useState(false)
@@ -20,6 +23,7 @@ export default function SignIn(){
     const handleChanges = (e) => {
         const {name , value} = e.target
         setformdata(prev => ({...prev , [name]:value}))
+        setusern(prev => ({...prev , [name]:value}))
     }
     const handleSubmit = async(e) => {
         setloader(true)
@@ -33,20 +37,29 @@ export default function SignIn(){
                 },
                 withCredentials:true
             })
-            console.log("User login Successfully")
+            console.log("User login Successfully" , res.data.loggedin)
             setmessage("user login successfully")
+
             setformdata({
                 username:"",
                 email:"",
                 password:""
             })
-            router.push("/")
+            console.log(res.data.loggedin.isActive)
+            console.log(res.data.loggedin.role)
+           if (res.data.loggedin.role === "teacher" && !res.data.loggedin.isActive) {
+  router.push("/Register/TutorDetails")
+} else {
+  router.push("/")
+}
+
             setloader(false)
+            
 
             
         } catch (error) {
             console.log("error aries" , error)
-           setmessage(error.response.data.message)
+           setmessage(error.response?.data?.message)
            setloader(false)
             
         }

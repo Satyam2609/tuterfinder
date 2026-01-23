@@ -1,43 +1,58 @@
-"use client"
-import { createContext, useContext, useState, useEffect } from "react"
-import axios from "axios"
+"use client";
 
-const AuthContext = createContext(null)
+import { createContext, useContext, useEffect, useState } from "react";
+import axios from "axios";
 
-export default function AuthProvider({children}) {
-  const [user, setUser] = useState(null)
-  const [username, setUsername] = useState("")
-  const [loading, setLoading] = useState(true)
+const AuthContext = createContext(null);
+
+export default function AuthProvider({ children }) {
+  const [user, setUser] = useState(null);       // actual user object
+  const [loading, setLoading] = useState(true); // auth check status
+const [tutordata , settuttordata] = useState([])
+  // 🔹 initial auth check (page refresh)
+  const fetchUser = async () => {
+    try {
+      const res = await axios.get(
+        "http://localhost:4000/api/authprovider",
+        { withCredentials: true }
+      );
+
+      if (res.data?.user) {
+        setUser(res.data.user);
+      } else {
+        setUser(null);
+      }
+    } catch (err) {
+      setUser(null);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const res = await axios.get("http://localhost:4000/api/authprovider", {
-          withCredentials: true,
-        })
-        if (res.data?.user) {
-          console.log("data auth" , res.data)
-          setUser(res.data)
-          setUsername(res.data.user.username || "")
-        } else {
-          setUser(null)
-          setUsername("")
-        }
-      } catch (err) {
-        setUser(null)
-        setUsername("")
-      } finally {
-        setLoading(false)
-      }
-    }
-    fetchUser()
-  }, [])
+    fetchUser();
+  }, []);
 
   return (
-    <AuthContext.Provider value={{ user, setUser, username, setUsername, loading }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        setUser,
+        loading,
+        tutordata,
+        settuttordata,
+        fetchUser, // optional but powerful
+      }}
+    >
       {children}
     </AuthContext.Provider>
-  )
+  );
 }
 
-export const useAuth = () => useContext(AuthContext)
+export const useAuth = () => {
+  const ctx = useContext(AuthContext);
+  if (!ctx) {
+    throw new Error("useAuth must be used inside AuthProvider");
+  }
+  return ctx;
+};

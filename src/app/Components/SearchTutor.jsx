@@ -1,181 +1,150 @@
 "use client"
 import axios from 'axios';
-import { Search ,Star} from 'lucide-react';
+import { Search, Star } from 'lucide-react';
 import { useState } from 'react';
-import {motion} from "framer-motion"
+import { motion } from "framer-motion";
+import { useRouter } from 'next/navigation';
 
 export default function SearchTutor() {
-  const [search , setsearch] = useState({
-    subject:"",
-    location:""
-  })
-  const [Searchdata , setSearchdata] = useState(null)
-  const handleChanges = (e) => {
-    const {name , value}  = e.target
-    setsearch(prev => ({ ...prev , [name]:value}))
+  const [search, setsearch] = useState({ subject: "", location: "" });
+  const [Searchdata, setSearchdata] = useState(null);
+  const router = useRouter();
 
-  }
-  const handleSubmit = async(e) => {
-    e.preventDefault()
+  const handleChanges = (e) => {
+    const { name, value } = e.target;
+    setsearch(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     try {
-     const res = await axios.get("http://localhost:4000/api/search", {
-  params: {
-    subject: search.subject,
-    location: search.location
-  },
-  withCredentials: true
-})
-     setSearchdata(res.data.data)
-     console.log(res.data.data)
-     
-      
-      
-    } catch (error) {
-      console.log(error.response?.data?.message || "not find")
-      
+      const res = await axios.get("http://localhost:4000/api/search", {
+        params: search,
+        withCredentials: true
+      });
+      setSearchdata(res.data.data);
+    } catch (err) {
+      console.log("Not found");
     }
-  }
+  };
+
   return (
-    <motion.section initial={{y:30 , opacity:0}} whileInView={{y:0 , opacity:1}} transition={{duration:0.6 , delay:0.5}} className="w-full bg-white py-10 md:py-14 mt-10">
-      <div className="w-full  mx-auto px-4 md:px-14 rounded-3xl">
+    <section className="w-full  text-white py-14 ">
+      <div className="max-w-8xl mx-auto px-20">
+
         {/* Heading */}
-        <motion.div initial={{y:30 , opacity:0}}  whileInView={{y:0 , opacity:1}} transition={{duration:0.4 , delay:0.3}} className="text-start mb-12">
-          <h1 className="text-2xl md:text-5xl font-extrabold text-gray-800">
-            Find the <span className="text-amber-500">Best Tutor</span> in Your City
+        <motion.div className="mb-12">
+          <h1 className="text-3xl md:text-5xl font-bold">
+            Find the <span className="text-yellow-400">Right Tutor</span>
           </h1>
-          <p className="mt-4 text-gray-500 text-lg md:text-xl">
-            Search coaching classes, home tutors & institutes near you
+          <p className="mt-4 text-white/70 text-lg">
+            Search tutors by subject & location — no noise, only quality
           </p>
         </motion.div>
 
-        {/* Search Box */}
-        <form onSubmit={handleSubmit}>
-  <div className="w-full flex flex-col md:flex-row gap-6 mb-10">
-
-    {/* SUBJECT */}
-    <div className="w-full md:w-1/2">
-      <label className="block mb-2 text-sm font-medium">Subject</label>
-      <motion.div initial={{x:-30 , opacity:0}} whileInView={{x:0 , opacity:1}} transition={{duration:0.4 , delay:0.5}} className="relative">
-        <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
-        <input
-          type="text"
-          name="subject"
-          value={search.subject}
-          onChange={handleChanges}
-          placeholder="Maths, Physics, Chemistry"
-          className="w-full h-14 pl-12 pr-4 border rounded-full focus:ring-2 focus:ring-amber-400"
-        />
-      </motion.div>
-    </div>
-
-    {/* LOCATION */}
-    <div className="w-full md:w-1/2">
-      <label className="block mb-2 text-sm font-medium">Location</label>
-      <motion.div initial={{x:30 , opacity:0}} whileInView={{x:0 , opacity:1}} transition={{duration:0.4 , delay:0.5}} className="relative">
-        <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
-        <input
-          type="text"
-          name="location"
-          value={search.location}
-          onChange={handleChanges}
-          placeholder="Delhi, Mumbai"
-          className="w-full h-14 pl-12 pr-4 border rounded-full focus:ring-2 focus:ring-amber-400"
-        />
-      </motion.div>
-    </div>
-
-  </div>
-
-  <div className="flex justify-center">
-    <motion.button initial={{opacity:0}} whileInView={{opacity:1}} transition={{duration:0.5 , delay:0.9}} className="px-12 py-3 rounded-full bg-yellow-400 font-semibold">
-      Search
-    </motion.button>
-  </div>
-</form>
-
-        
-
-
-       {
-        
-        Searchdata ? <div className=" flex overflow-x-auto  mt-10">
-          <label className='cursor-pointer' onClick={() => setSearchdata(null)}>Back</label>
-  {Searchdata.map((cards, index) => (
-    <motion.div initial={{y:60 , opacity:0}} animate={{y:0 , opacity:1}}  transition={{duration:0.9 , delay:index * 0.2}} key={index} className="px-2 mt-10 w-full shrink-0 max-w-sm">
-      <div className="bg-white rounded-2xl  shadow-md hover:shadow-xl transition duration-300 overflow-hidden border">
-
-        {/* Image */}
-        <div className="w-full h-55 overflow-hidden">
-          <img
-            src={cards.avatar}
-            alt={cards.username}
-            className="w-full h-full object-cover transition duration-300"
-          />
-        </div>
-
-        {/* Content */}
-        <div className="p-4 space-y-2">
-          <div className='flex justify-between'>
-          <h1 className="text-lg font-semibold text-gray-800 truncate">
-            {cards.username}
-          </h1>
-          <div className='flex gap-1'>{
-            [1,2,3,4,5].map((start) => (
-              <Star key={start} className='' size={20}/>
-
-            ))
-            }
+        {/* Search Form */}
+        <form onSubmit={handleSubmit} className="">
+          <div className='flex flex-col md:flex-row gap-6'>
+          <div className="w-full ">
+            <label className="text-sm text-white/70">Subject</label>
+            <div className="relative mt-2">
+              <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-yellow-400" />
+              <input
+                name="subject"
+                value={search.subject}
+                onChange={handleChanges}
+                placeholder="Maths, Physics"
+                className="w-full h-14 pl-12 bg-transparent border border-white/20 rounded-full focus:outline-none focus:border-yellow-400"
+              />
             </div>
-            </div>
-
-          <p className="text-sm text-gray-600 line-clamp-2">
-            {cards.email || "No description available"}
-          </p>
-
-          {/* Tags / Extra Info */}
-          <div className=" mt-3">
-              <p>Subject</p>
-            <span className="text-xs bg-blue-100 text-blue-600 px-2 py-1 rounded-full">
-              {cards.subject}
-            </span>
           </div>
 
-          {/* Button */}
-          <button className="mt-4 w-full py-2 text-sm font-medium rounded-lg bg-black text-white hover:bg-gray-800 transition">
-            View Profile
+          <div className="w-full">
+            <label className="text-sm text-white/70">Location</label>
+            <div className="relative mt-2">
+              <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-yellow-400" />
+              <input
+                name="location"
+                value={search.location}
+                onChange={handleChanges}
+                placeholder="Delhi, Mumbai"
+                className="w-full h-14 pl-12 text-black border border-white/20 bg-white/30 rounded-full focus:outline-none focus:border-yellow-400"
+              />
+            </div>
+          </div>
+          </div>
+        
+
+        <div className="flex justify-center mt-10">
+          <button className="px-12 py-3 border border-yellow-400 text-yellow-400 rounded-full hover:bg-yellow-400 hover:text-black transition">
+            Search Tutor
           </button>
         </div>
+        </form>
 
-      </div>
-    </motion.div>
-  ))}
-</div>
- :  
-        <motion.div initial={{y:50 , opacity:0}} whileInView={{y:0 , opacity:1}} transition={{duration:0.4 , delay:0.5}} className="flex flex-col md:flex-row justify-center md:space-x-10 space-y-10 md:space-y-0 items-center">
-          {/* Text */}
-          <div className="w-full md:w-1/2 flex flex-col py-15 md:py-32 text-center md:text-left">
-            <span className="text-lg md:text-2xl text-gray-800">
-              Discover the perfect tutor
-            </span>
-            <p className="font-bold text-yellow-400 text-3xl md:text-6xl mt-2">
-              for your learning needs, at the time that suits you best – trusted,
-            </p>
-            <span className="text-lg md:text-2xl text-gray-800 mt-2">
-              convenient, and completely hassle-free!
-            </span>
+        {/* RESULTS */}
+        {Searchdata && (
+          <div className="flex overflow-x-auto  gap-6 mt-14">
+            {Searchdata.map((card, i) => (
+              <motion.div
+                key={i}
+                className="min-w-[400px] border border-white/20 rounded-2xl p-4"
+              >
+                <img
+                  src={card.avatar}
+                  className="w-full h-48 object-cover rounded-xl border border-white/10"
+                />
+
+                <div className="mt-4">
+                  <div className="flex justify-between items-center">
+                    <h2 className="font-semibold">{card.username}</h2>
+                    <div className="flex text-yellow-400">
+                      {[1,2,3,4,5].map(i => <Star key={i} size={16} />)}
+                    </div>
+                  </div>
+
+                  <p className="text-sm text-white/60 mt-2">
+                    {card.email}
+                  </p>
+
+                  <span className="inline-block mt-3 px-3 py-1 text-xs border border-yellow-400 text-yellow-400 rounded-full">
+                    {card.subject}
+                  </span>
+
+                  <button
+                    onClick={() => router.push(`/Tutor/${card.username}`)}
+                    
+                    className="mt-4 w-full py-2 border border-white/20 rounded-lg hover:border-yellow-400 transition"
+                  >
+                    View Profile
+                  </button>
+                </div>
+              </motion.div>
+            ))}
           </div>
+        )}
 
-          {/* Image */}
-          <div className="w-full md:w-1/2 max-w-md">
+        {/* EMPTY STATE */}
+        {!Searchdata && (
+          <div className="mt-20 flex flex-col md:flex-row items-center gap-10">
+            <div className="md:w-1/2">
+              <h2 className="text-4xl font-bold">
+                Learn smarter with
+                <span className="text-yellow-400 underline"> verified tutors</span>
+              </h2>
+              <p className="mt-4 text-white/70">
+                No ads. No random listings. Only tutors that match your needs.
+              </p>
+            </div>
+
             <img
               src="/tutor3.png"
-              className="object-cover rounded-2xl w-full shadow-xl"
-              alt="Tutor Illustration"
+              className="w-full md:max-w-md rounded-2xl border border-white/10"
             />
           </div>
-        </motion.div>
-       }
+        )}
+
       </div>
-    </motion.section>
+    </section>
   );
 }

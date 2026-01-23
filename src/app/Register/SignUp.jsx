@@ -1,8 +1,10 @@
 "use client"
 
 import axios from "axios"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import {motion} from "framer-motion"
+import { useRouter } from "next/navigation"
+import TutorDetailsData from "./TutorDetails/TutorDetailsData"
 
 
 export default function SignUp() {
@@ -11,20 +13,49 @@ export default function SignUp() {
         email:"",
         password:"",
         role:"",
-        location:"",
-        subject:"",
         avatar:null
     })
-    const [roles , setroles] = useState(false)
+    const [roles , setroles] = useState("choose")
     const [Preview ,setPreview] = useState(null)
+    const [usernameMsg , setusernameMsg] = useState("")
+    const [vibrate , setvibrate] = useState(false)
+    const router = useRouter()
 
     const handleChanges = (e) => {
         const {name , value} = e.target
         setformdata(prev => ({...prev , [name]:value}))
     }
 
+    useEffect(() => {
+      if(!formdata.username){
+        setusernameMsg("")
+        return
+      }
+
+      const timer = setTimeout(async() => {
+        try {
+          const res = await axios.get("http://localhost:4000/api/userUnique" , {
+             params: { username: formdata.username },
+          })
+
+          setusernameMsg(res.data.available)
+          console.log(res.data.available)
+          
+        } catch (error) {
+          setusernameMsg("")
+          console.log(error)
+          
+        }
+        
+      }, 500);
+
+      return() => clearTimeout(timer)
+    } , [formdata.username])
+
     const handleSubmit = async(e) => {
         e.preventDefault()
+        if(usernameMsg === false) return
+        setvibrate(true)
 
         try {
             const formdatasubmit = new FormData()
@@ -32,8 +63,6 @@ export default function SignUp() {
         formdatasubmit.append("email" , formdata.email)
         formdatasubmit.append("password" , formdata.password)
         formdatasubmit.append("avatar" , formdata.avatar)
-        formdatasubmit.append("location" , formdata.location)
-        formdatasubmit.append("subject" , formdata.subject)
         formdatasubmit.append("role" , formdata.role)
 
         const res = await axios.post("http://localhost:4000/api/signUp" , formdatasubmit , {
@@ -42,16 +71,23 @@ export default function SignUp() {
           username:"",
           email:"",
           password:"",
-          location:"",
-          subject:"",
           role:""
         })
-        setroles(false)
+        
+          router.push("/Register/login")
+       
         console.log("user register successfully")
             
         } catch (err) {
             console.err("errror")
             
+        }
+        finally{
+           if(usernameMsg){
+            setTimeout(() => {
+          setvibrate(false)
+        }, 500);
+           }
         }
     }
     return(
@@ -75,7 +111,7 @@ export default function SignUp() {
     </div>
 
     {/* RIGHT FORM */}
-    {roles && <form onSubmit={handleSubmit} className="w-full md:w-1/2 flex flex-col gap-2 p-6 md:p-10 bg-white">
+    {(roles === "student" || roles === "teacher") &&  <form onSubmit={handleSubmit} className="w-full md:w-1/2 flex flex-col gap-2 p-6 md:p-10 bg-white">
     <label className="w-full flex justify-end underline text-lg"><a href="/Register/login">SignIn</a></label>
       <h1 className="text-3xl text-center font-bold">
         Find Your Best Tutor
@@ -117,8 +153,14 @@ export default function SignUp() {
       </div>
 
       <div>
-        <p className="text-sm font-medium">User Name</p>
+        <p className="text-sm font-medium">UserName</p>
         <input type="text" name="username" value={formdata.username} onChange={handleChanges} className="h-10 w-full rounded-xl border px-3" />
+        {usernameMsg !== "" && (
+  <p className={`${vibrate ? "animate-bounce" : ""} ${usernameMsg ? "text-green-500" : "text-red-500"}`}>
+    {usernameMsg ? "" : "Username already taken"}
+  </p>
+)}
+
       </div>
 
       <div>
@@ -130,28 +172,19 @@ export default function SignUp() {
         <p className="text-sm font-medium">Password</p>
         <input type="password" name="password" value={formdata.password} onChange={handleChanges} className="h-10 w-full rounded-xl border px-3" />
       </div>
-      {formdata.role === "teacher" &&(
-        <>
-      <div>
-        <p className="text-sm font-medium">Location</p>
-        <input type="text" name="location" value={formdata.location} onChange={handleChanges} className="h-10 w-full rounded-xl border px-3" />
-      </div> 
-      <div>
-        <p className="text-sm font-medium">Subject</p>
-        <input type="text" name="subject" value={formdata.subject} onChange={handleChanges} className="h-10 w-full rounded-xl border px-3" />
-      </div>
-    </>
-)}
       
-
-
-      <button type="submit"  className="mt-4 mx-auto px-6 py-2 rounded-xl bg-amber-400 text-white font-semibold hover:bg-amber-500 transition">
+      <button type="submit"   className="mt-4 mx-auto px-6 py-2 rounded-xl bg-amber-400 text-white font-semibold hover:bg-amber-500 transition">
         Submit
       </button>
     </form>
 }
+
+
+
+
+
 {
-    !roles && <motion.div
+    roles === "choose" && <motion.div
   initial={{ x: 20, opacity: 0 }}
   animate={{ x: 0, opacity: 1 }}
   transition={{ duration: 0.6, ease: "easeInOut" }}
@@ -170,11 +203,11 @@ export default function SignUp() {
   {/* Role buttons */}
   <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
     
-    <button onClick={() => {setformdata(prev => ({...prev , role:"student"})) , setroles(true)}} className="h-12 px-10 rounded-xl bg-amber-500 text-white font-medium hover:bg-amber-600 transition">
+    <button onClick={() => {setformdata(prev => ({...prev , role:"student"})) , setroles("student")}} className="h-12 px-10 rounded-xl bg-amber-500 text-white font-medium hover:bg-amber-600 transition">
       Student
     </button>
 
-    <button onClick={() => {setformdata(prev => ({...prev , role:"teacher"})) , setroles(true)}} className="h-12 px-10 rounded-xl bg-amber-500 text-white font-medium hover:bg-amber-600 transition">
+    <button onClick={() => {setformdata(prev => ({...prev , role:"teacher"})) , setroles("teacher")}} className="h-12 px-10 rounded-xl bg-amber-500 text-white font-medium hover:bg-amber-600 transition">
       Teacher
     </button>
 
