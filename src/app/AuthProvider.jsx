@@ -9,6 +9,7 @@ export default function AuthProvider({ children }) {
   const [user, setUser] = useState(null);       // actual user object
   const [loading, setLoading] = useState(true); // auth check status
 const [tutordata , settuttordata] = useState([])
+const [commentuser , setcommentuser] = useState(null)
   // 🔹 initial auth check (page refresh)
   const fetchUser = async () => {
     try {
@@ -41,6 +42,8 @@ const [tutordata , settuttordata] = useState([])
         loading,
         tutordata,
         settuttordata,
+        setcommentuser,
+        commentuser,
         fetchUser, // optional but powerful
       }}
     >

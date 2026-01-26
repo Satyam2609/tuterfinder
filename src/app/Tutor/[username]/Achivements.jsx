@@ -48,8 +48,8 @@ export default function Achievements() {
               rotateX: 0,
               scale: 1.05,
             }}
-            className="bg-gradient-to-br from-zinc-900 to-zinc-800 
-                       rounded-2xl p-8 text-white shadow-2xl
+            className="bg-white/40
+                       rounded-2xl p-8 text-white shadow-2xl shadow-black
                        transform-style-preserve-3d"
           >
             <h2 className="text-2xl font-semibold mb-2">

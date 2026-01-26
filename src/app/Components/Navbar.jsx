@@ -37,6 +37,13 @@ export default function Navbar() {
               >
                 Logout
               </li>
+              <Link href={"/ProfileStudent"}>
+              <li
+                className="cursor-pointer hover:text-red-400 transition"
+              >
+                Profile
+              </li>
+              </Link>
               
             </ul>
           ) : (

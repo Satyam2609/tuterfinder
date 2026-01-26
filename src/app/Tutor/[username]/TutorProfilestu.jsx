@@ -49,6 +49,9 @@ export default function TutorProfiles() {
         setTutor(res.data.tutor);
         settuttordata(res.data.tutor.achievements)
         
+        
+
+        
       } catch (err) {
         console.error(err.response?.data?.message || "Error fetching tutor");
       } finally {
@@ -88,7 +91,7 @@ export default function TutorProfiles() {
           <img
             src={tutor.avatar}
             alt={tutor.username}
-            className="w-full sm:w-[20rem] md:w-[37rem]  h-auto sm:h-[20rem] md:h-[27rem] object-cover"
+            className="w-full sm:w-[20rem] md:w-[33rem]  h-auto sm:h-[20rem] md:h-[24rem] object-cover"
           />
         </motion.div>
 

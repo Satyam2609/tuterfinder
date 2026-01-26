@@ -23,6 +23,7 @@ export default function SearchTutor() {
         withCredentials: true
       });
       setSearchdata(res.data.data);
+      console.log(res.data.data)
     } catch (err) {
       console.log("Not found");
     }
@@ -30,7 +31,7 @@ export default function SearchTutor() {
 
   return (
     <section className="w-full  text-white py-14 ">
-      <div className="max-w-8xl mx-auto px-20">
+      <div className="max-w-8xl mx-auto px-6 md:px-20">
 
         {/* Heading */}
         <motion.div className="mb-12">
@@ -88,7 +89,7 @@ export default function SearchTutor() {
             {Searchdata.map((card, i) => (
               <motion.div
                 key={i}
-                className="min-w-[400px] border border-white/20 rounded-2xl p-4"
+                className="min-w-[300px] border border-white/20 rounded-2xl p-4"
               >
                 <img
                   src={card.avatar}
@@ -108,7 +109,9 @@ export default function SearchTutor() {
                   </p>
 
                   <span className="inline-block mt-3 px-3 py-1 text-xs border border-yellow-400 text-yellow-400 rounded-full">
-                    {card.subject}
+                   {card.subjects.map((subject) => (
+                    <p key={subject._id}>{subject}</p>
+                   ))}
                   </span>
 
                   <button
