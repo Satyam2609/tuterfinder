@@ -49,7 +49,12 @@ export default function SignIn(){
             console.log(res.data.loggedin.role)
            if (res.data.loggedin.role === "teacher" && !res.data.loggedin.isActive) {
   router.push("/Register/TutorDetails")
-} else {
+}
+else if(res.data.loggedin.role === "teacher" && res.data.loggedin.isActive){
+    router.push("/tutoradmin")
+
+}
+ else {
   router.push("/")
 }
 
